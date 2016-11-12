@@ -25,5 +25,5 @@
 		<a href='https://noref.tk/?http://tvple.com/' target='_blank'>티비플 접속해서 주소 가져오기</a><br>
 		<input type="submit" value="전송"><br><br>
 		<a href='help.php'>동작 원리</a><br>
-		<a href='tvple_os.zip'>Open Source! (PHP + php_curl) --- 소스 더러움.</a>
+		<a href='https://github.com/hakasenyang/tvple-php'>Open Source! (PHP + php_curl) --- 소스 더러움.</a>
 	</form>
