@@ -6,11 +6,7 @@
  * https://hakase.kr/
  */
 	class Tvple {
-		private $httph = 'Mozilla/5.0';
-		public function __construct()
-		{
-			ob_start();
-		}
+		private $httph = 'DEXT5U5928d310';
 		/**
 		 * [splits description]
 		 * @param  [type]  $data  [description]
@@ -35,10 +31,6 @@
 		}
 		private function WEBParsing($url,$bodychk=false,$paramType="GET",$param="",$cookie="")
 		{
-			$uri = parse_url($url);
-			$paramType = strtoupper($paramType);
-			if (!$uri['port']) $uri['port'] = 80;
-			if (!$uri['path']) $uri['path'] = "/";
 			$ch = curl_init();
 			$opts = array(CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_URL => $url,
@@ -67,10 +59,6 @@
 		}
 		private function Download($url,$range=0)
 		{
-			$uri = parse_url($url);
-			$paramType = strtoupper($paramType);
-			if (!$uri['port']) $uri['port'] = 80;
-			if (!$uri['path']) $uri['path'] = "/";
 			$ch = curl_init();
 			$opts = array(CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_URL => $url,
@@ -93,23 +81,17 @@
 			$link = abs(intval($link));
 			if(!is_numeric($link)) exit;
 			$data = $this->WEBParsing('http://tvple.com/'.$link);
+			$data = $this->WEBParsing('http://tvple.com/'.$this->splits($data, '<a href="/', '"'));
+
 			$name = htmlspecialchars_decode($this->splits($data, '"og:title" content="','"'));
 
 			$api = $this->splits($data,'data-meta="','"');
 			$data = $this->WEBParsing($api);
-			$url = $this->splits($data,'"mp4_avc": "','"');
+			$link = $this->splits($data,'"mp4_avc": "','"');
 
-			if(!$url) return false;
-			$data = $this->WEBParsing($url,true);
+			if(!$link) return false;
 			// 2016-02-28 수정
-			// FULL URL
-			while(strpos($data, 'HTTP/1.1 200 OK') === false)
-			{
-				$url = $this->splits($data,'Location: ',PHP_EOL);
-				$data = $this->WEBParsing($url,true);
-			}
-			$data = $this->WEBParsing($url,true);
-
+			$data = $this->WEBParsing($link,true);
 			$size = $length = $this->splits($data, 'Content-Length: ', PHP_EOL);
 
 			$start  = 0;               // Start byte
@@ -154,12 +136,11 @@
 			header('Content-Disposition: filename="'.$filename.'"');
 
 			set_time_limit(0);
-			ob_flush();
-			flush();
+			ob_start();
 			if ($rangeok)
-				$this->Download($url,$start.'-'.$end);
+				$this->Download($link,$start.'-'.$end);
 			else
-				$this->Download($url);
+				$this->Download($link);
 			ob_end_flush();
 		}
 	}
